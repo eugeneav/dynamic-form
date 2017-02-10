@@ -1,5 +1,4 @@
-export const CHANGE_MODEL_VIEW = 'CHANGE_MODEL_VIEW';
-export const MODEL_CHANGED = 'MODEL_CHANGED';
+export const GET_ACTIVE_USER = 'GET_ACTIVE_USER';
 export const CHANGE_VIEW_MODEL = 'CHANGE_VIEW_MODEL';
 
 export function changeViewModel(payload) {
@@ -9,8 +8,8 @@ export function changeViewModel(payload) {
     }
 }
 
-export function updateModel() {
+export function getActiveUser() {
     return {
-        type: CHANGE_MODEL_VIEW,
+        type: GET_ACTIVE_USER,
     }
 }

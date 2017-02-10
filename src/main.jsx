@@ -1,41 +1,45 @@
-import Rx from 'rxjs/Rx';
-
 import React from 'react';
 import ReactDom from 'react-dom';
+import {Provider, connect} from 'react-redux';
+import {changeViewModel, updateModel, getActiveUser} from './actions';
 
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {Provider} from 'react-redux'
-
-import {changeViewModel, updateModel} from './actions';
-
-import {createStore, applyMiddleware} from 'redux';
+import {createStore, applyMiddleware, bindActionCreators, compose} from 'redux';
 import {modelApp} from './reducers';
 import {updateModelMiddleware} from './middleware';
 
-const middleware = applyMiddleware(updateModelMiddleware);
-const store = createStore(modelApp, middleware);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(modelApp, composeEnhancers(
+    applyMiddleware(updateModelMiddleware)
+));
 
-class InputText extends React.Component {
-
+class InputBase extends React.Component {
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
-    handleChange(newValue) {
-        this.props.onChange('name', newValue);
+    onChange(newValue) {
+        const { id } = this.props.data;
+        this.props.onChange(id, newValue);
     }
 
     render() {
-        return (
-            <div>
-                <h5>{this.props.model.get('name')}</h5>
-                <input type='text' value={this.props.model.get('name')} onChange={event => this.handleChange(event.target.value) }/>
-                <br /><br />
-                <input type='text' value={this.props.model.get('type')} />
-            </div>
-        );
+        return null;
+    }
+}
+
+class InputText extends InputBase {
+    render() {
+        const {value, isVisible} = this.props.data;
+        const component = <div>
+            <input
+                type='text'
+                value={value}
+                onChange={event => this.onChange(event.target.value) }
+            />
+        </div>;
+
+        return isVisible ? component : null;
     }
 }
 
@@ -47,17 +51,22 @@ class Form extends React.Component {
     }
 
     onChange(key, value) {
-        if (key === 'name') {
-            this.props.onViewModelUpdate(key, value);
-        }
+        this.props.onViewModelUpdate(key, value);
     }
 
     render() {
-        return (
-            <form>
-                <InputText model={this.props.model} onChange={this.onChange}/>
-            </form>
-        )
+        const {model} = this.props;
+
+        let form = null;
+        if (model) {
+            form =
+                <form>
+                    <InputText data={model.get('first_name')} onChange={this.onChange}/>
+                    <InputText data={model.get('last_name')} onChange={this.onChange}/>
+                    <InputText data={model.get('email')} onChange={this.onChange}/>
+                </form>;
+        }
+        return form;
     }
 }
 
@@ -68,29 +77,35 @@ class FormContainer extends React.Component {
         this.onViewModelUpdate = this.onViewModelUpdate.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.debug('nextProps', nextProps);
+    }
+
     componentDidMount() {
-        const {updateModel} = this.props;
-        updateModel();
+        const {getActiveUser} = this.props;
+        console.debug('getActiveUser()');
+        getActiveUser();
     }
 
     onViewModelUpdate(key, value) {
-        const { changeViewModel } = this.props;
-        changeViewModel({key: key, value: value});
+        const {changeViewModel, model} = this.props;
+        changeViewModel({modelId: model.get('id'), key: key, value: value});
     }
 
     render() {
-        return <Form model={this.props.model.get('viewModel')} onViewModelUpdate={ this.onViewModelUpdate }/>
+        return <Form model={this.props.model} onViewModelUpdate={ this.onViewModelUpdate }/>
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
+
     return {
-        model: state,
+        model: state.get('userViewModel'),
     }
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-    return bindActionCreators({changeViewModel, updateModel}, dispatch);
+    return bindActionCreators({changeViewModel, updateModel, getActiveUser}, dispatch);
 };
 
 const FormContainerRedux = connect(

@@ -1,22 +1,83 @@
 import {Record, Map} from 'immutable';
-import {CHANGE_VIEW_MODEL, CHANGE_MODEL_VIEW} from './actions';
+import {CHANGE_VIEW_MODEL, GET_ACTIVE_USER} from './actions';
 
-const ModelRecord = Record({name: 'Default'});
-const modelRecordInstance = new ModelRecord({name: 'Def1'});
+const UserModel = Record(
+    {
+        id: '',
+        first_name: 'Unknown',
+        last_name: 'Unknown',
+        email: 'Unknown',
+        address: 'Unknown',
+        field1: 'Unknown',
+        field2: 'Unknown'
+    }
+);
 
-const ModelViewRecord = Record({name: 'Default', type: 'View'});
-const modelViewRecordInstance = new ModelViewRecord({name: modelRecordInstance.get('name'), type: 'View'});
+const userModelInstance = new UserModel({
+    id: 'userModel',
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'jd@gmail.com',
+    address: 'Unknown',
+    field1: 'Unknown',
+    field2: 'Unknown'
+});
 
-const state = new Map({model: modelRecordInstance, viewModel: modelViewRecordInstance});
+const state = new Map({userModel: userModelInstance, userViewModel: null});
 
 export function modelApp(model = state, action) {
     switch (action.type) {
         case CHANGE_VIEW_MODEL:
-            let viewModel = model.get('viewModel');
+
+            let viewModel = model.get(action.payload.modelId);
+
             let newViewModel = viewModel.withMutations((modelTmp) => {
-                return modelTmp.set(action.payload.key, action.payload.value);
+                let data = viewModel.get(action.payload.key);
+                data.value =  action.payload.value;
+                return modelTmp.set(action.payload.key, data);
             });
-            return model.set('viewModel', newViewModel);
+
+            return model.withMutations(model => model.set(action.payload.modelId, newViewModel));
+            break;
+        case GET_ACTIVE_USER:
+            const userModelInstance = model.get('userModel');
+            let userViewModel = new UserModel(
+                {
+                    id: 'userViewModel',
+                    first_name: {
+                      id: 'first_name',
+                      value: userModelInstance.get('first_name'),
+                      isVisible: true,
+                    },
+                    last_name: {
+                        id: 'last_name',
+                        value: userModelInstance.get('last_name'),
+                        isVisible: true,
+                    },
+                    email: {
+                        id: 'email',
+                        value: userModelInstance.get('email'),
+                        isVisible: true,
+                    },
+                    address: {
+                        id: 'address',
+                        value: userModelInstance.get('address'),
+                        isVisible: false,
+                    },
+                    field1: {
+                        id: 'field1',
+                        value: userModelInstance.get('field1'),
+                        isVisible: false,
+                    },
+                    field2: {
+                        id: 'field2',
+                        value: userModelInstance.get('field2'),
+                        isVisible: false,
+                    }
+                }
+            );
+
+            return model.withMutations(tmpState => tmpState.set(userViewModel.get('id'), userViewModel));
             break;
         default:
             return model;

@@ -28,19 +28,19 @@ const state = new Map({userModel: userModelInstance, userViewModel: null});
 export function modelApp(model = state, action) {
     switch (action.type) {
         case CHANGE_VIEW_MODEL:
-
             let viewModel = model.get(action.payload.modelId);
-
             let newViewModel = viewModel.withMutations((modelTmp) => {
-                let data = viewModel.get(action.payload.key);
+                let data = modelTmp.get(action.payload.key);
                 data.value =  action.payload.value;
                 return modelTmp.set(action.payload.key, data);
             });
 
-            return model.withMutations(model => model.set(action.payload.modelId, newViewModel));
+            return model.withMutations(tmpState => tmpState.set(action.payload.modelId, newViewModel));
+
             break;
         case GET_ACTIVE_USER:
             const userModelInstance = model.get('userModel');
+
             let userViewModel = new UserModel(
                 {
                     id: 'userViewModel',
@@ -58,6 +58,9 @@ export function modelApp(model = state, action) {
                         id: 'email',
                         value: userModelInstance.get('email'),
                         isVisible: true,
+                        hideFor: {
+                            first_name: [1, 2, 'HIDE_EMAIL']
+                        }
                     },
                     address: {
                         id: 'address',

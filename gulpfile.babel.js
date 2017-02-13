@@ -23,7 +23,7 @@ gulp.task('watch', function () {
 gulp.task('webserver', function () {
     gulp.src('./')
         .pipe(server({
-            livereload: true,
+            livereload: false,
             directoryListing: true,
             port: 8001,
         }));

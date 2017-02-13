@@ -1,17 +1,19 @@
-import { CHANGE_MODEL_VIEW, changeViewModel} from './actions';
+import { CHANGE_VIEW_MODEL, changeViewModel} from './actions';
+
+
+let interval = null;
 
 export const updateModelMiddleware = store => next => action => {
-
-    // Example:
-    // (action.type === CHANGE_MODEL_PROPERTY)
-    // (action.type === CHANGE_MODEL_BATCH)
-    // changeViewModel({ key: 'name', value: `new-name-${tries++}`})
-    if(action.type === CHANGE_MODEL_VIEW) {
+    if(action.type === CHANGE_VIEW_MODEL) {
         let tries = 0;
         // May be triggered when any member of a model has been changed
-        setInterval(() => {
-            store.dispatch(changeViewModel({ key: 'name', value: `new-name-${tries++}`}))
-        }, 5000);
+        if(interval === null) {
+           console.debug('Interval enabled');
+           interval = setInterval(() => {
+                console.debug(tries);
+                store.dispatch(changeViewModel({modelId: 'userViewModel', key: 'first_name', value: 'Attempt ' + tries++}));
+            }, 5000);
+        }
     }
     next(action);
 };

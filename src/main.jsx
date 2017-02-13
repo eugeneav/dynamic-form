@@ -23,6 +23,13 @@ class InputBase extends React.Component {
         this.updateState = this.updateState.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            value: nextProps.data.value,
+            isVisible: nextProps.data.isVisible,
+        });
+    }
+
     onChange(newValue) {
         const {id} = this.props.data;
         this.props.onChange(id, newValue);

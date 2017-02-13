@@ -32,7 +32,13 @@ export function modelApp(model = state, action) {
             let newViewModel = viewModel.withMutations((modelTmp) => {
                 let data = modelTmp.get(action.payload.key);
                 data.value =  action.payload.value;
-                return modelTmp.set(action.payload.key, data);
+                let newData = {
+                    id: action.payload.key,
+                    value: action.payload.value,
+                    isVisible: data.isVisible,
+                    hideFor: data.hideFor || {},
+                };
+                return modelTmp.set(action.payload.key, newData);
             });
 
             return model.withMutations(tmpState => tmpState.set(action.payload.modelId, newViewModel));

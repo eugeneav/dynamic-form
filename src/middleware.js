@@ -12,7 +12,7 @@ export const updateModelMiddleware = store => next => action => {
            interval = setInterval(() => {
                 console.debug(tries);
                 store.dispatch(changeViewModel({modelId: 'userViewModel', key: 'first_name', value: 'Attempt ' + tries++}));
-            }, 5000);
+            }, 15000);
         }
     }
     next(action);

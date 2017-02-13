@@ -15,32 +15,12 @@ const store = createStore(modelApp, composeEnhancers(
 class InputBase extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            value: props.data.value,
-            isVisible: props.data.isVisible,
-        };
         this.onChange = this.onChange.bind(this);
-        this.updateState = this.updateState.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.data.value,
-            isVisible: nextProps.data.isVisible,
-        });
     }
 
     onChange(newValue) {
         const {id} = this.props.data;
         this.props.onChange(id, newValue);
-        this.setState({
-            value: newValue,
-            isVisible: this.state.isVisible,
-        });
-    }
-
-    updateState(key, value) {
-        throw `${this.constructor.name} class does not override updateState() method of InputBase class`;
     }
 }
 
@@ -48,18 +28,10 @@ class FormBase extends React.Component {
     constructor(props) {
         super(props);
         this.onChange = this.onChange.bind(this);
-        this.updateChildElementsVisibility = this.updateChildElementsVisibility.bind(this);
     }
 
     onChange(key, value) {
-        this.updateChildElementsVisibility(key, value);
         this.props.onViewModelUpdate(key, value);
-    }
-
-    updateChildElementsVisibility(propKey, propValue) {
-        Object.keys(this.refs).forEach(key => {
-            this.refs[key].updateState(propKey, propValue);
-        });
     }
 }
 
@@ -68,27 +40,11 @@ class InputText extends InputBase {
         const component = <div>
             <input
                 type='text'
-                value={this.state.value}
+                value={this.props.data.value}
                 onChange={event => this.onChange(event.target.value) }
             /><span>{this.props.data.value}</span>
         </div>;
-        return this.state.isVisible ? component : null;
-    }
-
-    // @Override
-    updateState(key, value) {
-        if (this.props.data.hasOwnProperty('hideFor')) {
-            const hideFor = this.props.data.hideFor;
-            if (hideFor.hasOwnProperty(key)) {
-                const values = hideFor[key];
-                const valuesLength = values.length;
-                for (let i = 0; i < valuesLength; i++) {
-                    let state = {value: this.state.value, isVisible: this.state.isVisible};
-                    state.isVisible = value !== values[i];
-                    this.setState(state);
-                }
-            }
-        }
+        return this.props.data.isVisible ? component : null;
     }
 }
 
@@ -103,6 +59,9 @@ class Form extends FormBase {
                     <InputText ref={'first_name'} data={model.get('first_name')} onChange={this.onChange}/>
                     <InputText ref={'last_name'} data={model.get('last_name')} onChange={this.onChange}/>
                     <InputText ref={'email'} data={model.get('email')} onChange={this.onChange}/>
+                    <InputText ref={'address'} data={model.get('address')} onChange={this.onChange}/>
+                    <InputText ref={'field1'} data={model.get('field1')} onChange={this.onChange}/>
+                    <InputText ref={'field2'} data={model.get('field2')} onChange={this.onChange}/>
                 </form>;
         }
         return form;

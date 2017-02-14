@@ -3,12 +3,12 @@ import {CHANGE_VIEW_MODEL, GET_ACTIVE_USER} from './actions';
 
 const UserModel = Record({
     id: '',
-    first_name: 'Unknown',
-    last_name: 'Unknown',
-    email: 'Unknown',
-    address: 'Unknown',
-    field1: 'Unknown',
-    field2: 'Unknown'
+    first_name: 'First name Unknown',
+    last_name: 'Last name Unknown',
+    email: 'Email Unknown',
+    address: 'Address Unknown',
+    field1: 'Field1 Unknown',
+    field2: 'Field2 Unknown'
 });
 
 const userModelInstance = new UserModel({
@@ -16,9 +16,9 @@ const userModelInstance = new UserModel({
     first_name: 'John',
     last_name: 'Doe',
     email: 'jd@gmail.com',
-    address: 'Unknown',
-    field1: 'Unknown',
-    field2: 'Unknown'
+    address: 'Address Unknown',
+    field1: 'Field1 Unknown',
+    field2: 'Field2 Unknown',
 });
 
 const state = new Map({userModel: userModelInstance, userViewModel: null});
@@ -84,21 +84,24 @@ export function modelApp(model = state, action) {
                         value: userModelInstance.get('email'),
                         isVisible: true,
                         hideFrom: {
-                            first_name: ['h']
+                            first_name: ['hide']
                         }
                     },
                     address: {
                         id: 'address',
                         value: userModelInstance.get('address'),
                         isVisible: false,
+                        showFor: {
+                            last_name: ['a', 'ab']
+                        },
                     },
                     field1: {
                         id: 'field1',
                         value: userModelInstance.get('field1'),
                         isVisible: false,
                         showFor: {
-                            last_name: ['a']
-                        }
+                            last_name: ['a',]
+                        },
                     },
                     field2: {
                         id: 'field2',

@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var server = require('gulp-server-livereload');
+var browserSync = require('browser-sync').create();
 var watch = require('gulp-watch');
 var source = require('vinyl-source-stream');
 var babelify = require('babelify');
@@ -21,12 +21,11 @@ gulp.task('watch', function () {
 });
 
 gulp.task('webserver', function () {
-    gulp.src('./')
-        .pipe(server({
-            livereload: false,
-            directoryListing: true,
-            port: 8001,
-        }));
+    browserSync.init({
+        server: {
+            baseDir: "./",
+        }
+    });
 });
 
 gulp.task('default', ['build', 'watch', 'webserver']);

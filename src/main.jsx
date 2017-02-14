@@ -56,12 +56,12 @@ class Form extends FormBase {
         if (model) {
             form =
                 <form>
-                    <InputText ref={'first_name'} data={model.get('first_name')} onChange={this.onChange}/>
-                    <InputText ref={'last_name'} data={model.get('last_name')} onChange={this.onChange}/>
-                    <InputText ref={'email'} data={model.get('email')} onChange={this.onChange}/>
-                    <InputText ref={'address'} data={model.get('address')} onChange={this.onChange}/>
-                    <InputText ref={'field1'} data={model.get('field1')} onChange={this.onChange}/>
-                    <InputText ref={'field2'} data={model.get('field2')} onChange={this.onChange}/>
+                    <InputText data={model.get('first_name')} onChange={this.onChange}/>
+                    <InputText data={model.get('last_name')} onChange={this.onChange}/>
+                    <InputText data={model.get('email')} onChange={this.onChange}/>
+                    <InputText data={model.get('address')} onChange={this.onChange}/>
+                    <InputText data={model.get('field1')} onChange={this.onChange}/>
+                    <InputText data={model.get('field2')} onChange={this.onChange}/>
                 </form>;
         }
         return form;
